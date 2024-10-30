@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<style>
+	body{
+		font-family: monospace;
+		font-size: 16px;
+	}
+	span{
+		margin-left: 15px;
+		
+	}
+</style>
+
+<div style="float: left; width: 50%">
+	<table id="wordsearch"></table>
+</div>
+<div style="float: right; width: 50%">
+	<button onclick="search(this)">buffy</button>
+	<button onclick="search(this)">addamsfamily</button>
+	<button onclick="search(this)">corpsebride</button>
+	<button onclick="search(this)">hoteltransylvania</button>
+	<button onclick="search(this)">sleepyhollow</button>
+	<button onclick="search(this)">beetlejuice</button>
+	<button onclick="search(this)">edwardscissorhands</button>
+	<button onclick="search(this)">littlevampire</button>
+	<button onclick="search(this)">spookybuddies</button>
+	<button onclick="search(this)">blackcauldron</button>
+	<button onclick="search(this)">frankenweenie</button>
+	<button onclick="search(this)">monsterhouse</button>
+	<button onclick="search(this)">strangerthings</button>
+	<button onclick="search(this)">boxtrolls</button>
+	<button onclick="search(this)">ghostbusters</button>
+	<button onclick="search(this)">monstersinc</button>
+	<button onclick="search(this)">thewitches</button>
+	<button onclick="search(this)">goosebumps</button>
+	<button onclick="search(this)">munsters</button>
+	<button onclick="search(this)">carrie</button>
+	<button onclick="search(this)">gremlins</button>
+	<button onclick="search(this)">paranorman</button>
+	<button onclick="search(this)">casper</button>
+	<button onclick="search(this)">halloween</button>
+	<button onclick="search(this)">scoobydoo</button>
+	<button onclick="search(this)">coco</button>
+	<button onclick="search(this)">hauntedmansion</button>
+	<button onclick="search(this)">scream</button>
+	<button onclick="search(this)">coraline</button>
+	<button onclick="search(this)">hocuspocus</button>
+</div>
+
+<script>
+	//STORE LETTERS IN GRID FORMAT
+	var grid = [];
+	grid.push([' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']);
+	grid.push([' ','b','u','f','f','y','f','r','a','n','k','e','n','w','e','e','n','i','e','f','w',' ']);
+	grid.push([' ','t','u','a','d','d','a','m','s','f','a','m','i','l','y','a','g','u','e','d','u',' ']);
+	grid.push([' ','h','s','m','o','n','s','t','e','r','h','o','u','s','e','n','b','d','p','h','p',' ']);
+	grid.push([' ','e','l','g','b','c','n','i','s','r','e','t','s','n','o','m','w','p','g','f','h',' ']);
+	grid.push([' ','w','i','e','n','h','g','r','e','m','l','i','n','s','j','a','y','r','b','o','v',' ']);
+	grid.push([' ','i','t','c','a','i','n','a','v','l','y','s','n','a','r','t','l','e','t','o','h',' ']);
+	grid.push([' ','t','t','i','s','z','h','x','n','h','o','b','e','d','m','s','o','c','o','c','z',' ']);
+	grid.push([' ','c','l','u','l','n','c','t','x','c','u','b','s','x','l','o','c','o','s','q','e',' ']);
+	grid.push([' ','h','e','j','l','d','a','d','r','c','l','c','b','e','n','o','o','n','p','s','d',' ']);
+	grid.push([' ','e','v','e','o','r','s','m','y','e','i','x','e','n','s','d','r','e','o','p','i',' ']);
+	grid.push([' ','s','a','l','r','p','p','x','r','s','g','p','m','u','w','y','a','e','o','m','r',' ']);
+	grid.push([' ','m','m','t','t','x','e','j','s','o','y','n','c','e','e','b','l','w','k','u','b',' ']);
+	grid.push([' ','u','p','e','x','q','r','o','s','h','n','o','a','i','l','o','i','o','y','b','e',' ']);
+	grid.push([' ','n','i','e','o','c','r','c','o','z','p','a','r','r','x','o','n','l','b','e','s',' ']);
+	grid.push([' ','s','r','b','b','h','r','l','a','s','s','r','r','v','t','c','e','l','u','s','p',' ']);
+	grid.push([' ','t','e','s','a','e','l','x','u','x','a','i','d','a','j','s','n','a','d','o','r',' ']);
+	grid.push([' ','e','w','n','a','o','k','c','i','c','y','a','v','f','p','l','q','h','d','o','o',' ']);
+	grid.push([' ','r','d','m','w','n','o','r','d','l','u','a','c','k','c','a','l','b','i','g','c',' ']);
+	grid.push([' ','s','n','h','v','h','s','e','v','g','h','o','s','t','b','u','s','t','e','r','s',' ']);
+	grid.push([' ','n','o','i','s','n','a','m','d','e','t','n','u','a','h','g','n','j','s','z','l',' ']);
+	grid.push([' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']);
+	
+	//GET TABLE
+	var table = document.getElementById('wordsearch');
+	
+	//ITERATE ROWS
+	for(i = 0; i < grid.length; i++){
+		//CREATE TR
+		var row = document.createElement('tr');
+		//ADD TO TABLE
+		table.appendChild(row);
+		//ITERATE COLUMNS
+		for(j = 0; j < grid[i].length; j++){
+			//CREATE TD
+			var cell = document.createElement('td');
+			//POPULATE TD
+			var letter = document.createElement('span');
+			letter.setAttribute('id', i.toString() + '-' + j.toString());
+			letter.innerHTML = grid[i][j];
+			//ADD TO LETTER TO CELL
+			cell.appendChild(letter);
+			//ADD TO CELL TO ROW
+			row.appendChild(cell);
+		}
+	}
+	
+	function search(htmlElement){
+		
+		console.log('search called');
+		
+		//WORDS THAT DONT WORK:
+		//coroline (should it be coraline?)
+		//haunted house (should be haunted mansion)
+		//corpse bride (typo on my part)
+		//monster inc (should it be monsters inc?)
+		
+		
+		//GET ELEMENT CONTENTS (ANSWER TO SEARCH FOR)
+		searchWord = htmlElement.innerHTML;
+		console.log(searchWord);
+		
+		//INIT FOUND POSITIONS
+		positions = [];
+		found = false;
+		
+		//ITERATE LETTERS
+		for(i = 0; i < grid.length; i++){
+			for(j = 0; j < grid[i].length; j++){
+				
+				console.log(grid[i][j] + ' vs ' + searchWord.charAt(0));
+				
+				//COMPARE GRID LETTER AND LETTER IN SEARCH WORD
+				if(grid[i][j] == searchWord.charAt(0)){
+					
+					console.log('first character found');
+					
+					//CHECK UPPER LEFT
+					if(grid[i - 1][j - 1] == searchWord.charAt(1)){
+						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
+						console.log('second character found - upper left');
+						positions.push([i,j]);
+						positions.push([i-1,j-1]);
+						found = true;
+						
+						//CONTINUE SEARCHING IN THIS DIRECTION
+						for(h = 1; h < searchWord.length; h++){
+							if(searchWord.charAt(h) == grid[i-h][j-h]){
+								//ADD TO POSITIONS
+								positions.push([i-h, j-h]);
+							}else{
+								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
+								console.log('EMPTYING POSITIONS 135');
+								positions = [];
+								found = false;
+								break;
+							}
+						}
+						if(found){
+							//FULL WORD FOUND
+							showAnswer(htmlElement, positions);
+							return;
+						}
+					}
+					
+					//CHECK LEFT
+					if(grid[i][j - 1] == searchWord.charAt(1)){
+						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
+						console.log('second character found - left');
+						positions.push([i,j]);
+						positions.push([i,j-1]);
+						found = true;
+						
+						//CONTINUE SEARCHING IN THIS DIRECTION
+						for(h = 1; h < searchWord.length; h++){
+							if(searchWord.charAt(h) == grid[i][j-h]){
+								//ADD TO POSITIONS
+								positions.push([i, j-h]);
+							}else{
+								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
+								console.log('EMPTYING POSITIONS 158');
+								positions = [];
+								found = false;
+								break;
+							}
+						}
+						if(found){
+							//FULL WORD FOUND
+							showAnswer(htmlElement, positions);
+							return;
+						}
+					}
+					
+					//CHECK LOWER LEFT
+					if(grid[i + 1][j - 1] == searchWord.charAt(1)){
+						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
+						console.log('second character found - lower left');
+						positions.push([i,j]);
+						positions.push([i+1,j-1]);
+						found = true;
+						
+						//CONTINUE SEARCHING IN THIS DIRECTION
+						for(h = 1; h < searchWord.length; h++){
+							if(searchWord.charAt(h) == grid[i+h][j-h]){
+								//ADD TO POSITIONS
+								positions.push([i+h, j-h]);
+							}else{
+								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
+								console.log('EMPTYING POSITIONS 181');
+								positions = [];
+								found = false;
+								break;
+							}
+						}
+						if(found){
+							//FULL WORD FOUND
+							showAnswer(htmlElement, positions);
+							return;
+						}
+					}
+					
+					//CHECK ABOVE
+					if(grid[i - 1][j] == searchWord.charAt(1)){
+						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
+						console.log('second character found - above');
+						positions.push([i,j]);
+						positions.push([i-1,j]);
+						found = true;
+						
+						//CONTINUE SEARCHING IN THIS DIRECTION
+						for(h = 1; h < searchWord.length; h++){
+							if(searchWord.charAt(h) == grid[i-h][j]){
+								//ADD TO POSITIONS
+								positions.push([i-h, j]);
+							}else{
+								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
+								console.log('EMPTYING POSITIONS 204');
+								positions = [];
+								found = false;
+								break;
+							}
+						}
+						if(found){
+							//FULL WORD FOUND
+							showAnswer(htmlElement, positions);
+							return;
+						}
+					}
+					
+					//CHECK BELOW
+					if(grid[i + 1][j] == searchWord.charAt(1)){
+						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
+						console.log('second character found - below');
+						positions.push([i,j]);
+						positions.push([i+1,j]);
+						found = true;
+						
+						//CONTINUE SEARCHING IN THIS DIRECTION
+						for(h = 1; h < searchWord.length; h++){
+							if(searchWord.charAt(h) == grid[i+h][j]){
+								//ADD TO POSITIONS
+								positions.push([i+h, j]);
+							}else{
+								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
+								console.log('EMPTYING POSITIONS 227');
+								positions = [];
+								found = false;
+								break;
+							}
+						}
+						if(found){
+							//FULL WORD FOUND
+							showAnswer(htmlElement, positions);
+							return;
+						}
+					}
+					
+					//CHECK UPPER RIGHT
+					if(grid[i - 1][j + 1] == searchWord.charAt(1)){
+						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
+						console.log('second character found - upper right');
+						positions.push([i,j]);
+						positions.push([i+1,j-1]);
+						found = true;
+						
+						//CONTINUE SEARCHING IN THIS DIRECTION
+						for(h = 1; h < searchWord.length; h++){
+							if(searchWord.charAt(h) == grid[i-h][j+h]){
+								//ADD TO POSITIONS
+								positions.push([i-h, j+h]);
+							}else{
+								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
+								console.log('EMPTYING POSITIONS 250');
+								positions = [];
+								found = false;
+								break;
+							}
+						}
+						if(found){
+							//FULL WORD FOUND
+							showAnswer(htmlElement, positions);
+							return;
+						}
+					}
+					
+					//CHECK RIGHT
+					if(grid[i][j + 1] == searchWord.charAt(1)){
+						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
+						console.log('second character found - right');
+						positions.push([i,j]);
+						positions.push([i,j+1]);
+						found = true;
+						
+						//CONTINUE SEARCHING IN THIS DIRECTION
+						for(h = 1; h < searchWord.length; h++){
+							if(searchWord.charAt(h) == grid[i][j+h]){
+								//ADD TO POSITIONS
+								positions.push([i, j+h]);
+							}else{
+								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
+								console.log('EMPTYING POSITIONS 273');
+								positions = [];
+								found = false;
+								break;
+							}
+						}
+						if(found){
+							//FULL WORD FOUND
+							showAnswer(htmlElement, positions);
+							return;
+						}
+					}
+					
+					//CHECK LOWER RIGHT
+					if(grid[i + 1][j + 1] == searchWord.charAt(1)){
+						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
+						console.log('second character found - lower right');
+						positions.push([i,j]);
+						positions.push([i+1,j+1]);
+						found = true;
+						
+						//CONTINUE SEARCHING IN THIS DIRECTION
+						for(h = 1; h < searchWord.length; h++){
+							if(searchWord.charAt(h) == grid[i+h][j+h]){
+								//ADD TO POSITIONS
+								positions.push([i+h, j+h]);
+							}else{
+								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
+								console.log('EMPTYING POSITIONS 296');
+								positions = [];
+								found = false;
+								break;
+							}
+						}
+						if(found){
+							//FULL WORD FOUND
+							showAnswer(htmlElement, positions);
+							return;
+						}
+					}
+				}
+			}
+		}
+				
+	}
+	
+	function showAnswer(htmlElement, positions){
+		
+		console.log('showAnswer called');
+		
+		console.log('answer found: ' + htmlElement.innerHTML);
+		for(i = 0; i < positions.length; i++){
+			console.log('At : ' + positions[i][0] + ', ' + positions[i][1]);
+			document.getElementById(positions[i][0].toString() + '-' + positions[i][1].toString()).style = 'color:red; font-weight: bold';
+		}
+		
+		//TO-DO: make it more noticable which words are which instead of just colouring everything the same
+		
+	}
+	
+</script>
