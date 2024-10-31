@@ -5,8 +5,8 @@
 		font-size: 16px;
 	}
 	span{
-		margin-left: 15px;
-		
+		margin-left: 5px;
+		margin-right: 5px;
 	}
 </style>
 
@@ -45,9 +45,18 @@
 	<button onclick="search(this)">coraline</button>
 	<button onclick="search(this)">hocuspocus</button>
 </div>
+<div>
+	<select id="mode" onchange="changeMode()">
+		<option value="light">Light Mode</option>
+		<option value="dark">Dark Mode</option>
+	</select>
+</div>
+
+<div id="blanket" style="position:fixed; min-height: 100%; min-width: 100%; background-color: black; top: 0px; left: 0px; z-index: 1000; display: none"></div>
 
 <script>
 	//STORE LETTERS IN GRID FORMAT
+	//PAD GRID SO DONT HAVE TO MESS WITH OUT OF BOUNDS ERRORS :)
 	var grid = [];
 	grid.push([' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ',' ']);
 	grid.push([' ','b','u','f','f','y','f','r','a','n','k','e','n','w','e','e','n','i','e','f','w',' ']);
@@ -85,9 +94,11 @@
 		for(j = 0; j < grid[i].length; j++){
 			//CREATE TD
 			var cell = document.createElement('td');
+			//SET CELL ID - WILL BE USED FOR STYLING LATER
+			cell.style.textAlign = 'center';
+			cell.setAttribute('id', i.toString() + '-' + j.toString());
 			//POPULATE TD
 			var letter = document.createElement('span');
-			letter.setAttribute('id', i.toString() + '-' + j.toString());
 			letter.innerHTML = grid[i][j];
 			//ADD TO LETTER TO CELL
 			cell.appendChild(letter);
@@ -101,272 +112,123 @@
 		console.log('search called');
 		
 		//WORDS THAT DONT WORK:
-		//coroline (should it be coraline?)
-		//haunted house (should be haunted mansion)
-		//corpse bride (typo on my part)
-		//monster inc (should it be monsters inc?)
-		
+		//coroline (should be coraline?)
+		//haunted house (should haunted mansion)
+		//monster inc (should be monsters inc?)
 		
 		//GET ELEMENT CONTENTS (ANSWER TO SEARCH FOR)
 		searchWord = htmlElement.innerHTML;
-		console.log(searchWord);
+		//console.log(searchWord);
 		
 		//INIT FOUND POSITIONS
 		positions = [];
 		found = false;
+		directions = [
+			//MMM JANKY
+			['-', '-'],
+			['', '-'],
+			['+', '-'],
+			['-', ''],
+			['+', ''],
+			['-', '+'],
+			['', '+'],
+			['+', '+']
+		];
 		
 		//ITERATE LETTERS
 		for(i = 0; i < grid.length; i++){
 			for(j = 0; j < grid[i].length; j++){
 				
-				console.log(grid[i][j] + ' vs ' + searchWord.charAt(0));
+				//LOG GRID VS WORD COMPARISON
+				//console.log(grid[i][j] + ' vs ' + searchWord.charAt(0));
 				
 				//COMPARE GRID LETTER AND LETTER IN SEARCH WORD
 				if(grid[i][j] == searchWord.charAt(0)){
 					
-					console.log('first character found');
+					//LOG
+					//console.log('first character found');
 					
-					//CHECK UPPER LEFT
-					if(grid[i - 1][j - 1] == searchWord.charAt(1)){
-						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
-						console.log('second character found - upper left');
-						positions.push([i,j]);
-						positions.push([i-1,j-1]);
-						found = true;
+					//ITERATE DIRECTIONS
+					for(d = 0; d < directions.length; d++){
 						
-						//CONTINUE SEARCHING IN THIS DIRECTION
-						for(h = 1; h < searchWord.length; h++){
-							if(searchWord.charAt(h) == grid[i-h][j-h]){
-								//ADD TO POSITIONS
-								positions.push([i-h, j-h]);
-							}else{
-								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
-								console.log('EMPTYING POSITIONS 135');
-								positions = [];
-								found = false;
-								break;
+						//CHECK DIRECTION
+						if(grid[mathJank(i, 1, directions[d][0])][mathJank(j, 1, directions[d][1])] == searchWord.charAt(1)){							
+							//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
+							//console.log('second character found');
+							positions.push([i,j]);
+							positions.push([mathJank(i, 1, directions[d][0]),mathJank(j, 1, directions[d][1])]);
+							//SET FLAG
+							found = true;
+							
+							//CONTINUE SEARCHING IN THIS DIRECTION
+							for(h = 1; h < searchWord.length; h++){
+								//COMPARE AGAIN
+								if(searchWord.charAt(h) == grid[mathJank(i,h, directions[d][0])][mathJank(j,h, directions[d][1])]){
+									//ADD TO POSITIONS
+									positions.push([mathJank(i,h, directions[d][0]), mathJank(j,h, directions[d][1])]);
+								}else{
+									//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
+									//console.log('EMPTYING POSITIONS');
+									positions = [];
+									found = false;
+									break;
+								}
+							}
+							if(found){
+								//FULL WORD FOUND
+								showAnswer(htmlElement, positions);
+								return;
 							}
 						}
-						if(found){
-							//FULL WORD FOUND
-							showAnswer(htmlElement, positions);
-							return;
-						}
-					}
-					
-					//CHECK LEFT
-					if(grid[i][j - 1] == searchWord.charAt(1)){
-						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
-						console.log('second character found - left');
-						positions.push([i,j]);
-						positions.push([i,j-1]);
-						found = true;
 						
-						//CONTINUE SEARCHING IN THIS DIRECTION
-						for(h = 1; h < searchWord.length; h++){
-							if(searchWord.charAt(h) == grid[i][j-h]){
-								//ADD TO POSITIONS
-								positions.push([i, j-h]);
-							}else{
-								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
-								console.log('EMPTYING POSITIONS 158');
-								positions = [];
-								found = false;
-								break;
-							}
-						}
-						if(found){
-							//FULL WORD FOUND
-							showAnswer(htmlElement, positions);
-							return;
-						}
 					}
-					
-					//CHECK LOWER LEFT
-					if(grid[i + 1][j - 1] == searchWord.charAt(1)){
-						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
-						console.log('second character found - lower left');
-						positions.push([i,j]);
-						positions.push([i+1,j-1]);
-						found = true;
-						
-						//CONTINUE SEARCHING IN THIS DIRECTION
-						for(h = 1; h < searchWord.length; h++){
-							if(searchWord.charAt(h) == grid[i+h][j-h]){
-								//ADD TO POSITIONS
-								positions.push([i+h, j-h]);
-							}else{
-								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
-								console.log('EMPTYING POSITIONS 181');
-								positions = [];
-								found = false;
-								break;
-							}
-						}
-						if(found){
-							//FULL WORD FOUND
-							showAnswer(htmlElement, positions);
-							return;
-						}
-					}
-					
-					//CHECK ABOVE
-					if(grid[i - 1][j] == searchWord.charAt(1)){
-						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
-						console.log('second character found - above');
-						positions.push([i,j]);
-						positions.push([i-1,j]);
-						found = true;
-						
-						//CONTINUE SEARCHING IN THIS DIRECTION
-						for(h = 1; h < searchWord.length; h++){
-							if(searchWord.charAt(h) == grid[i-h][j]){
-								//ADD TO POSITIONS
-								positions.push([i-h, j]);
-							}else{
-								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
-								console.log('EMPTYING POSITIONS 204');
-								positions = [];
-								found = false;
-								break;
-							}
-						}
-						if(found){
-							//FULL WORD FOUND
-							showAnswer(htmlElement, positions);
-							return;
-						}
-					}
-					
-					//CHECK BELOW
-					if(grid[i + 1][j] == searchWord.charAt(1)){
-						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
-						console.log('second character found - below');
-						positions.push([i,j]);
-						positions.push([i+1,j]);
-						found = true;
-						
-						//CONTINUE SEARCHING IN THIS DIRECTION
-						for(h = 1; h < searchWord.length; h++){
-							if(searchWord.charAt(h) == grid[i+h][j]){
-								//ADD TO POSITIONS
-								positions.push([i+h, j]);
-							}else{
-								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
-								console.log('EMPTYING POSITIONS 227');
-								positions = [];
-								found = false;
-								break;
-							}
-						}
-						if(found){
-							//FULL WORD FOUND
-							showAnswer(htmlElement, positions);
-							return;
-						}
-					}
-					
-					//CHECK UPPER RIGHT
-					if(grid[i - 1][j + 1] == searchWord.charAt(1)){
-						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
-						console.log('second character found - upper right');
-						positions.push([i,j]);
-						positions.push([i+1,j-1]);
-						found = true;
-						
-						//CONTINUE SEARCHING IN THIS DIRECTION
-						for(h = 1; h < searchWord.length; h++){
-							if(searchWord.charAt(h) == grid[i-h][j+h]){
-								//ADD TO POSITIONS
-								positions.push([i-h, j+h]);
-							}else{
-								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
-								console.log('EMPTYING POSITIONS 250');
-								positions = [];
-								found = false;
-								break;
-							}
-						}
-						if(found){
-							//FULL WORD FOUND
-							showAnswer(htmlElement, positions);
-							return;
-						}
-					}
-					
-					//CHECK RIGHT
-					if(grid[i][j + 1] == searchWord.charAt(1)){
-						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
-						console.log('second character found - right');
-						positions.push([i,j]);
-						positions.push([i,j+1]);
-						found = true;
-						
-						//CONTINUE SEARCHING IN THIS DIRECTION
-						for(h = 1; h < searchWord.length; h++){
-							if(searchWord.charAt(h) == grid[i][j+h]){
-								//ADD TO POSITIONS
-								positions.push([i, j+h]);
-							}else{
-								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
-								console.log('EMPTYING POSITIONS 273');
-								positions = [];
-								found = false;
-								break;
-							}
-						}
-						if(found){
-							//FULL WORD FOUND
-							showAnswer(htmlElement, positions);
-							return;
-						}
-					}
-					
-					//CHECK LOWER RIGHT
-					if(grid[i + 1][j + 1] == searchWord.charAt(1)){
-						//SECOND CHARACTER FOUND. ADD FOUND CHARACTERS TO POSITIONS
-						console.log('second character found - lower right');
-						positions.push([i,j]);
-						positions.push([i+1,j+1]);
-						found = true;
-						
-						//CONTINUE SEARCHING IN THIS DIRECTION
-						for(h = 1; h < searchWord.length; h++){
-							if(searchWord.charAt(h) == grid[i+h][j+h]){
-								//ADD TO POSITIONS
-								positions.push([i+h, j+h]);
-							}else{
-								//NO MATCH, EMPTY POSITIONS AND SEARCH AGAIN
-								console.log('EMPTYING POSITIONS 296');
-								positions = [];
-								found = false;
-								break;
-							}
-						}
-						if(found){
-							//FULL WORD FOUND
-							showAnswer(htmlElement, positions);
-							return;
-						}
-					}
+
 				}
 			}
 		}
-				
+		
 	}
 	
-	function showAnswer(htmlElement, positions){
+	function showAnswer(htmlElement, positions)
+	{
+		//LOG
+		//console.log('showAnswer called');		
+		//console.log('answer found: ' + htmlElement.innerHTML);
 		
-		console.log('showAnswer called');
+		//CREATE PSUEDO RANDOM TEXT COLOUR (MAKES INDIVIDUAL WORDS STAND OUT)
+		colours = ['#fc59a3','#87c830','#ffd400','#fe7e0f','#2daefd', '#ff3155', '#49f770']
+		var textColour = colours[Math.floor(Math.random() * colours.length)];
 		
-		console.log('answer found: ' + htmlElement.innerHTML);
+		//ITERATE POSITIONS
 		for(i = 0; i < positions.length; i++){
-			console.log('At : ' + positions[i][0] + ', ' + positions[i][1]);
-			document.getElementById(positions[i][0].toString() + '-' + positions[i][1].toString()).style = 'color:red; font-weight: bold';
+			//LOG
+			//console.log('At : ' + positions[i][0] + ', ' + positions[i][1]);
+			//COLOUR CELL
+			document.getElementById(positions[i][0].toString() + '-' + positions[i][1].toString()).style = 'background-color:black; font-weight: bold; color: ' + textColour;
 		}
-		
-		//TO-DO: make it more noticable which words are which instead of just colouring everything the same
-		
+	}
+	
+	//WIERD WAY OF STORING A MATHEMATICAL OPERATOR AS A VARIABLE
+	function mathJank(a, b, operator)
+	{
+		switch(operator){
+			case '':
+				return a;
+			break;
+			case '+':
+				return a+b;
+			break;
+			case '-':
+				return a-b;
+			break;
+		}
+	}
+	
+	//LOL
+	function changeMode()
+	{
+		console.log('Well now I can\'t see anything.');
+		document.getElementById('blanket').style = "position:fixed; min-height: 100%; min-width: 100%; background-color: black; top: 0px; left: 0px; z-index: 1000;";
 	}
 	
 </script>
